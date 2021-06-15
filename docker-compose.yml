@@ -1,0 +1,18 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      KAFKA_HOST: kafka
+    networks:
+      - network-topic-channel
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+volumes: {}
+networks:
+  network-topic-channel:
+    external:
+      name: kafka_network-topic-channel
