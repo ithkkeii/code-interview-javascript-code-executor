@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { exec } from 'child_process';
 import { AppService } from './app.service';
 
 const delay = (ms) =>
@@ -20,8 +21,20 @@ export class AppController {
 
   @MessagePattern('javascript') // Our topic name
   async hi(@Payload() message) {
-    console.log(message.value);
-    await delay(5000);
+    const name = Date.now();
+    const memory = '100m';
+    const cpus = '0.01';
+    const volume = `${__dirname}/temp/${1}:/user-code`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest node user-code/run.js`;
+
+    const child = exec(statement);
+    child.stderr.on('data', (data) => {
+      `child err: ${console.log(data)}`;
+    });
+    child.stdout.on('data', (data) => {
+      // console.log('data', data);
+    });
+
     return 'Hello World';
   }
 }
