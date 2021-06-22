@@ -9,7 +9,7 @@ const forkCompute = () =>
 
     compute.send('start');
 
-    compute.on('message', message => {
+    compute.on('message', (message) => {
       console.log(message);
       resolve(message);
       return;
@@ -17,7 +17,7 @@ const forkCompute = () =>
   });
 
 const run = async () => {
-  const x = input.map(i => {
+  const x = input.map((i) => {
     return forkCompute();
   });
 
