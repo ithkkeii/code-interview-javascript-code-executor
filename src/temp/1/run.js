@@ -17,11 +17,12 @@ const forkCompute = () =>
   });
 
 const run = async () => {
-  const x = input.map((i) => {
-    return forkCompute();
-  });
+  console.log('yes');
+  // const x = input.map((i) => {
+  //   return forkCompute();
+  // });
 
-  await Promise.all(x);
+  // await Promise.all(x);
 };
 
 run();

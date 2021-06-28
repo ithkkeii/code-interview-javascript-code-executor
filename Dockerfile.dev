@@ -1,4 +1,4 @@
-FROM node:14.15.4-alpine3.10
+FROM node:14.17.1
 
 WORKDIR /app
 
@@ -7,6 +7,15 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN yarn install
+
+# Install
+# RUN apt-get -y update
+# RUN apt-get -y install curl
+
+# # Install docker
+ENV DOCKER_VERSION=18.09.4
+RUN curl -o docker-cli.deb https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce-cli_18.09.0~3-0~ubuntu-bionic_amd64.deb
+RUN dpkg -i docker-cli.deb
 
 COPY . .
 

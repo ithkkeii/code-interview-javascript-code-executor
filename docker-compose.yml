@@ -11,6 +11,8 @@ services:
       - .:/app
       - /app/node_modules
       - /app/dist
+      # Container using same docker daemon with host
+      - /var/run/docker.sock:/var/run/docker.sock
 volumes: {}
 networks:
   network-topic-channel:

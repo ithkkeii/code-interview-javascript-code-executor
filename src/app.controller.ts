@@ -1,8 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { exec } from 'child_process';
-import { writeFile } from 'fs';
-import { promisify } from 'util';
+import { writeFile } from 'fs/promises';
 import { AppService } from './app.service';
 
 @Controller()
@@ -39,16 +38,16 @@ export class AppController {
 
     const transformedAssertData = assertionData.join('\n');
 
-    await promisify(writeFile)(`src/temp/1/input.txt`, transformedInputData);
-    await promisify(writeFile)(`src/temp/1/assert.txt`, transformedAssertData);
+    // await writeFile(`src/temp/1/input.txt`, transformedInputData);
+    // await writeFile(`src/temp/1/assert.txt`, transformedAssertData);
 
-    // const child = exec(statement);
-    // child.stderr.on('data', (data) => {
-    //   `child err: ${console.log(data)}`;
-    // });
-    // child.stdout.on('data', (data) => {
-    //   // console.log('data', data);
-    // });
+    const child = exec(statement);
+    child.stderr.on('data', (data) => {
+      `child err: ${console.log(data)}`;
+    });
+    child.stdout.on('data', (data) => {
+      console.log('data', data);
+    });
 
     return 'Hello World';
   }
