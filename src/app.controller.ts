@@ -28,9 +28,11 @@ export class AppController {
     // Provided cpu 1 = 100% = 1 core
     const cpus = '0.01';
     // Bind volume
-    const volume = `${__dirname}/temp/${1}:/user-code`;
+    // const volume = `"$(pwd)"/temp/${1}:/user-code`;
+    const volume = `/usr:/user-code-cc`;
+    console.log(volume);
     // Docker run statement
-    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest node user-code/run.js`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest bin/sh -c "ls; cd user-code-cc; echo hi; while true; do sleep 1000; done"`;
 
     const transformedInputData = inputData
       .map((d) => JSON.stringify(d))
@@ -46,7 +48,7 @@ export class AppController {
       `child err: ${console.log(data)}`;
     });
     child.stdout.on('data', (data) => {
-      console.log('data', data);
+      console.log(data);
     });
 
     return 'Hello World';
