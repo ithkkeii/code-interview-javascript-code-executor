@@ -29,10 +29,11 @@ export class AppController {
     const cpus = '0.01';
     // Bind volume
     // const volume = `"$(pwd)"/temp/${1}:/user-code`;
-    const volume = `/usr:/user-code-cc`;
-    console.log(volume);
+    const folderPath =
+      '/home/kei/data/project/code-interview/javascript-code-executor';
+    const volume = `${folderPath}/src/temp/1:/user-code`;
     // Docker run statement
-    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest bin/sh -c "ls; cd user-code-cc; echo hi; while true; do sleep 1000; done"`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest node user-code/run.js`;
 
     const transformedInputData = inputData
       .map((d) => JSON.stringify(d))
