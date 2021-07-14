@@ -2,14 +2,10 @@
 const { readFile } = require('fs/promises');
 const { isPrime } = require('./is-prime');
 
-process.on('message', async () => {
-  // const buffer = await readFile('input.txt');
+process.on('message', (input) => {
+  const total = JSON.parse(input).reduce((a, b) => a + b, 1);
 
-  // process.send(buffer);
-
-  process.send('hello');
-  // const result = isPrime(Math.random() * 1000);
-  // process.send(result);
+  process.send(total);
 
   process.exit();
 });

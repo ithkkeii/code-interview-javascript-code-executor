@@ -26,7 +26,7 @@ export class AppController {
     // Provided memory scale at mega bytes
     const memory = '100m';
     // Provided cpu 1 = 100% = 1 core
-    const cpus = '0.01';
+    const cpus = '0.1';
     // Bind volume
     // const volume = `"$(pwd)"/temp/${1}:/user-code`;
     const folderPath =
