@@ -9,7 +9,6 @@ const forkCompute = (input) =>
     compute.send(input);
 
     compute.on('message', (message) => {
-      console.log(message);
       resolve(message);
       return;
     });
@@ -17,13 +16,27 @@ const forkCompute = (input) =>
 
 const run = async () => {
   const fileContent = await readFile('user-code/input.txt');
+  const assertContent = await readFile('user-code/assert.txt');
+
+  const asserts = assertContent.toString().split('\n');
   const inputs = fileContent.toString().split('\n');
 
-  const result = inputs.map((input) => {
+  let resultPromise = inputs.map((input) => {
     return forkCompute(input);
   });
 
-  await Promise.all(result);
+  const result = await Promise.all(resultPromise);
+
+  result.map((r, index) => {
+    const getFnc = new Function(`return ${asserts[index]}`);
+
+    try {
+      console.log(getFnc);
+      getFnc(r);
+    } catch (error) {
+      console.log(error);
+    }
+  });
 };
 
 run();

@@ -10,17 +10,6 @@ export class AppController {
 
   @MessagePattern('javascript') // Our topic name
   async hi(@Payload() message) {
-    // Fake input data
-    const inputData = [
-      [1, 2, 3, 4],
-      [1, 0, 0, 0, 1],
-    ];
-
-    const assertionData = [
-      'function(x) { return assert.equal(x, "3"); }',
-      'function(x) { return assert.equal(x, "3"); }',
-    ];
-
     // Container name
     const name = Date.now();
     // Provided memory scale at mega bytes
@@ -35,14 +24,24 @@ export class AppController {
     // Docker run statement
     const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest node user-code/run.js`;
 
+    // Using challenge unique identifier
+    const inputData = [
+      [1, 2, 3, 4],
+      [1, 0, 0, 0, 1],
+    ];
+    const assertionData = [
+      'function(x) { return assert.equal(x, 10); }',
+      'function(x) { return assert.equal(x, 2); }',
+    ];
+
     const transformedInputData = inputData
       .map((d) => JSON.stringify(d))
       .join('\n');
 
     const transformedAssertData = assertionData.join('\n');
 
-    // await writeFile(`src/temp/1/input.txt`, transformedInputData);
-    // await writeFile(`src/temp/1/assert.txt`, transformedAssertData);
+    await writeFile(`src/temp/1/input.txt`, transformedInputData);
+    await writeFile(`src/temp/1/assert.txt`, transformedAssertData);
 
     const child = exec(statement);
     child.stderr.on('data', (data) => {
