@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { fork } = require('child_process');
 const { readFile } = require('fs/promises');
+const chai = require('chai');
 
 const forkCompute = (input) =>
   new Promise(async (resolve, reject) => {
@@ -27,16 +28,21 @@ const run = async () => {
 
   const result = await Promise.all(resultPromise);
 
-  result.map((r, index) => {
-    const getFnc = new Function(`return ${asserts[index]}`);
+  const x = result.map((r, index) => {
+    const assert = chai.assert;
+
+    const assertFnc = new Function(`return ${asserts[index]}`)();
 
     try {
-      console.log(getFnc);
-      getFnc(r);
+      assertFnc(assert, r);
+      return true;
     } catch (error) {
-      console.log(error);
+      const { actual, expected } = error;
+      return false;
     }
   });
+
+  console.log(x);
 };
 
 run();

@@ -21,8 +21,9 @@ export class AppController {
     const folderPath =
       '/home/kei/data/project/code-interview/javascript-code-executor';
     const volume = `${folderPath}/src/temp/1:/user-code`;
+    const volume2 = `${folderPath}/src/temp/node_modules:/user-code/node_modules`;
     // Docker run statement
-    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} javascript:latest node user-code/run.js`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} -v ${volume2} javascript:latest node user-code/run.js`;
 
     // Using challenge unique identifier
     const inputData = [
@@ -30,8 +31,8 @@ export class AppController {
       [1, 0, 0, 0, 1],
     ];
     const assertionData = [
-      'function(x) { return assert.equal(x, 10); }',
-      'function(x) { return assert.equal(x, 2); }',
+      'function(assert, x) { return assert.equal(x, 10); }',
+      'function(assert, x) { return assert.equal(x, 2); }',
     ];
 
     const transformedInputData = inputData
@@ -48,7 +49,7 @@ export class AppController {
       `child err: ${console.log(data)}`;
     });
     child.stdout.on('data', (data) => {
-      console.log(data);
+      console.log('data', data);
     });
 
     return 'Hello World';
