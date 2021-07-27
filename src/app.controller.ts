@@ -23,7 +23,7 @@ export class AppController {
     const volume = `${folderPath}/src/temp/1:/user-code`;
     const volume2 = `${folderPath}/src/temp/node_modules:/user-code/node_modules`;
     // Docker run statement
-    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} -v ${volume2} javascript:latest node user-code/run.js`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} -v ${volume2} --network=host javascript:latest node user-code/run.js`;
 
     // Using challenge unique identifier
     const inputData = [
