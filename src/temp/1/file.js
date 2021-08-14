@@ -2,11 +2,14 @@
 const { readFile } = require('fs/promises');
 const { isPrime } = require('./is-prime');
 
-process.on('message', (input) => {
-  // const total = JSON.parse(input).reduce((a, b) => a + b, 1);
-  const total = 10;
+process.on('message', (inputs) => {
+  const sum = (arr) => {
+    return arr.reduce((a, b) => a + b, 1);
+  };
 
-  process.send(total);
+  const result = sum(JSON.parse(inputs));
+
+  process.send(result);
 
   process.exit();
 });

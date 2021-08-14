@@ -16,6 +16,8 @@ const connectSocketIOAsync = (io) => {
   });
 };
 
+console.log();
+
 const forkCompute = (input, user, socket) =>
   new Promise(async (resolve, reject) => {
     const compute = fork(`${__dirname}/file.js`);
@@ -23,32 +25,18 @@ const forkCompute = (input, user, socket) =>
     compute.send(input);
 
     compute.on('message', (message) => {
-      socket.emit('code-execute-result', JSON.stringify([user, message]));
       resolve(message);
       return;
     });
   });
 
 const run = async () => {
-  const user = 'user-123';
+  const uniqueChannel = process.env.UNIQUE_CHANNEL;
 
   let socket = null;
 
   try {
     socket = await connectSocketIOAsync(io);
-  } catch (error) {
-    console.log(error);
-  }
-
-  // const client = redis.createClient({
-  //   url: `redis://${process.env.REDIS_HOST}:6380`,
-  // });
-
-  // client.on('error', (error) => console.log(error));
-
-  try {
-    const response = await axios.get(`http://localhost:3002/ping`);
-    console.log(response.data);
   } catch (error) {
     console.log(error);
   }
@@ -59,13 +47,13 @@ const run = async () => {
   const asserts = assertContent.toString().split('\n');
   const inputs = fileContent.toString().split('\n');
 
-  let resultPromise = inputs.map((input) => {
-    return forkCompute(input, user, socket);
+  let computedResult = inputs.map((input) => {
+    return forkCompute(input, uniqueChannel, socket);
   });
 
-  const result = await Promise.all(resultPromise);
+  const result = await Promise.all(computedResult);
 
-  const x = result.map((r, index) => {
+  const mappedResult = result.map((r, index) => {
     const assert = chai.assert;
 
     const assertFnc = new Function(`return ${asserts[index]}`)();
@@ -79,8 +67,9 @@ const run = async () => {
     }
   });
 
-  // x.forEach((r) => socket.emit(user, JSON.stringify(r)));
-  result.forEach((r) => console.log(JSON.stringify(r)));
+  mappedResult.forEach((result) => {
+    socket.emit('code-execute-result', JSON.stringify([uniqueChannel, result]));
+  });
 };
 
 run();

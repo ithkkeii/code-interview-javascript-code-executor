@@ -4,21 +4,29 @@ import { exec } from 'child_process';
 import { writeFile } from 'fs/promises';
 import { AppService } from './app.service';
 
+// ? Split this interface properly
+interface DeliveryContent {
+  user: {
+    id: number;
+  };
+  userListeningChannel: string;
+  testInputs: string[];
+  testAssertions: string[];
+}
+
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @MessagePattern('javascript') // Our topic name
   async hi(@Payload() message) {
-    const deliveryContent = message.value;
+    const deliveryContent: DeliveryContent = message.value;
 
     // Using challenge unique identifier
-    const inputData = deliveryContent.testInput;
-    const assertionData = deliveryContent.testAssertion;
+    const inputData = deliveryContent.testInputs;
+    const assertionData = deliveryContent.testAssertions;
 
-    const transformedInputData = inputData
-      .map((d) => JSON.stringify(d))
-      .join('\n');
+    const transformedInputData = inputData.join('\n');
     const transformedAssertData = assertionData.join('\n');
 
     // Container name
@@ -33,8 +41,13 @@ export class AppController {
       '/home/kei/data/project/code-interview/javascript-code-executor';
     const volume = `${folderPath}/src/temp/1:/user-code`;
     const volume2 = `${folderPath}/src/temp/node_modules:/user-code/node_modules`;
+
+    // Unique channel that user is listening
+    const uniqueChannel = `UNIQUE_CHANNEL=${deliveryContent.userListeningChannel}`;
+    console.log(uniqueChannel);
+
     // Docker run statement
-    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -v ${volume} -v ${volume2} --network=host javascript:latest node user-code/run.js`;
+    const statement = `docker run --name ${name} --memory='${memory}' --cpus='${cpus}' --rm -e ${uniqueChannel} -v ${volume} -v ${volume2} --network=host javascript:latest node user-code/run.js`;
 
     await writeFile(`src/temp/1/input.txt`, transformedInputData);
     await writeFile(`src/temp/1/assert.txt`, transformedAssertData);

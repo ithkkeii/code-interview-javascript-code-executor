@@ -1,2 +1,4 @@
-function(assert, x) { return assert.equal(x, 10); }
-function(assert, x) { return assert.equal(x, 2); }
+function(assert, x) { return assert.equal(x, 15); }
+function(assert, x) { return assert.equal(x, 16); }
+function(assert, x) { return assert.equal(x, 14); }
+function(assert, x) { return assert.equal(x, 113); }
